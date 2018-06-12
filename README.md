@@ -30,10 +30,14 @@ The line 34 ensures that react won't try to render more than once per animation 
 The line 39 is the real magic.
 It will only pass the last version of the state when requested.
 If more updates are comming from the state, it will keep the last and drop the rest.
-So that means that some updates (most of them actually) won't be rendered.
+So that means that some updates won't be rendered.
+Most of them actually, it may render only 15 or 20 frames over 600, but it does so in a few hundred milliseconds, so it still is around 60fps.
 
 But it doesn't matter since these updates are building on top of each other,
 the last update is always the complete state up to date, and the last update is always rendered.
+And since we are rendering one time per frame, we are already rendering the maximum number of fps that the browser can display.
+
 Another thing to notice: it will only try to get updates from the state if the app as nothing more important to do (is idle).
+So it doesn't take precious CPU just to drop some state updates.
 
 If you wonder how it works, look at the code in src/shared/stream/time.js
