@@ -1,0 +1,20 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "browsers": ["last 2 versions"]
+        },
+        "shippedProposals": true,
+        "useBuiltIns": "usage"
+      }
+    ],
+    [
+      "@babel/preset-react",
+      {
+        "pragma": "props.createElement"
+      }
+    ]
+  ]
+}
