@@ -21,6 +21,7 @@ Now try the line 39:
 debounce(idleIterator),
 ```
 
+### What happened ?
 On its own, react can manage to render 60fps on firefox, but it still renders each and every frames.
 It means that if you have 600 updates of the state, react will take about 10 sec to get up to date with the last version.
 
