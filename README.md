@@ -16,7 +16,7 @@ Now try to edit src/index.js and comment the line 34:
 await new Promise(requestAnimationFrame)
 ```
 
-Now try the line 39:
+Now try commenting line 39:
 ```js
 debounce(idleIterator),
 ```
@@ -29,7 +29,7 @@ The line 34 ensures that react won't try to render more than once per animation 
 
 The line 39 is the real magic.
 It will only pass the last version of the state when requested.
-If more updates are comming from the state, it will keep the last and drop the rest.
+If more updates are coming from the state, it will keep the last and drop the rest.
 So that means that some updates won't be rendered.
 Most of them actually, it may render only 15 or 20 frames over 600, but it does so in a few hundred milliseconds, so it still is around 60fps.
 
