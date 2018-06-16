@@ -4,7 +4,10 @@
       "@babel/preset-env",
       {
         "targets": {
-          "browsers": ["last 2 versions"]
+          "browsers": [
+            "firefox 60",
+            "chrome 67"
+          ]
         },
         "shippedProposals": true,
         "useBuiltIns": "usage"
