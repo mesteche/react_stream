@@ -1,7 +1,9 @@
 # react_stream
+
 sample demo app of react and async iterators
 
 ## usage
+
 Install the dependencies
 `npm install`
 
@@ -17,11 +19,17 @@ await new Promise(requestAnimationFrame)
 ```
 
 Now try commenting line 39:
+
 ```js
 debounce(idleIterator),
 ```
 
+/!\ This is only holds true because we are manually calling react's render method.
+If you use react's internal setState (call it 600 times in a loop) or redux's dispatch (same thing), react will not render 600 times, or even 20 time but only once.
+The lesson is : don't render manually, react is already perfomant.
+
 ### What happened ?
+
 On its own, react can manage to render 60fps on firefox, but it still renders each and every frames.
 It means that if you have 600 updates of the state, react will take about 10 sec to get up to date with the last version.
 
