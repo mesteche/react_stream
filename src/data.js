@@ -7,4 +7,4 @@ export const setupInitialState = (nbRows, nbCols) =>
     })),
   }))
 
-export const UPDATES = 20000
+export const UPDATES = 600

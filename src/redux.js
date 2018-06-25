@@ -2,6 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import { connect, Provider } from 'react-redux'
 import { createStore } from 'redux'
+import { ws } from './api'
 
 import Grid from './Grid'
 
@@ -18,7 +19,7 @@ const reducer = (
 ) =>
   action.type === 'update'
     ? {
-        data: setupInitialState(40, 10),
+        data: action.data,
       }
     : state
 
@@ -26,11 +27,14 @@ const mapStateToProps = state => ({
   state: state.data,
 })
 
-const mapDispatchToProps = dispatch => ({
-  updateLoop: () => {
-    for (let i = 0; i < UPDATES; i++) dispatch({ type: 'update' })
-  },
-})
+const mapDispatchToProps = dispatch => {
+  ws.addEventListener('message', data => {
+    dispatch({ type: 'update', data: JSON.parse(data.data) })
+  })
+  return dispatch => ({
+    updateLoop: () => ws.send(UPDATES),
+  })
+}
 
 const App = connect(
   mapStateToProps,
@@ -44,9 +48,11 @@ const App = connect(
 
 const store = createStore(reducer)
 
-render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById('app3'),
-)
+ws.addEventListener('open', () => {
+  render(
+    <Provider store={store}>
+      <App />
+    </Provider>,
+    document.getElementById('app3'),
+  )
+})

@@ -3,26 +3,21 @@ import { stream, fp, redux, renderer } from './shared'
 import Grid from './Grid'
 
 import { setupInitialState, UPDATES } from './data'
+import { ws } from './api'
 
 const { pipe } = fp
 const { map, debounce, idleIterator, createChannel } = stream
 const { createStore } = redux
 const { render, ...props } = renderer
 
-const reducer = (state, action = {}) =>
-  action.type === 'update' ? { data: setupInitialState(40, 10) } : state
+const reducer = (state, { type, data } = {}) =>
+  type === 'update' ? { data } : state
 
 const initialState = {
   data: setupInitialState(40, 10),
 }
 
 const store = createStore(reducer, initialState)
-
-const update = () => store.dispatch({ type: 'update' })
-
-const updateLoop = () => {
-  for (let i = 0; i < UPDATES; i++) update()
-}
 
 const debounceClassic = time => iterable => {
   const out = createChannel()
@@ -70,16 +65,26 @@ const mesure = (n, nStart = n) => item => {
   return item
 }
 
-pipe(
-  // map(mesure(600)),
-  debounce(idleIterator),
-  map(({ data }) => (
-    <div>
-      <button onClick={updateLoop}>Update {UPDATES} times</button>
-      <Grid state={data} />
-    </div>
-  )),
-  map(render(document.getElementById('app1'))),
-  // debounceClassic(200),
-  unqueueFrames,
-)(store)
+
+ws.addEventListener('open', () => {
+  const requestMore = () => ws.send(UPDATES)
+  const init = pipe(
+    // map(mesure(600)),
+    debounce(idleIterator),
+    map(({ data }) => (
+      <div>
+        <button onClick={requestMore}>Update {UPDATES} times</button>
+        <Grid state={data} />
+      </div>
+    )),
+    map(render(document.getElementById('app1'))),
+    // debounceClassic(200),
+    unqueueFrames,
+  )
+
+  ws.addEventListener('message', data => {
+    store.dispatch({ type: 'update', data: JSON.parse(data.data) })
+  })
+
+  init(store)
+})
